@@ -77,10 +77,12 @@ def test_search():
 
 
 if '__main__' == __name__:
+    #dl = dlist(["migu"])
     dl = dlist()
     #rlist = dl.get_mlist("https://www.kugou.com/yy/special/single/2440703.html")
     #print(rlist)
-    dl.down_mlist("https://www.kugou.com/yy/special/single/2440703.html")
+    uid = "2688007"
+    dl.down_mlist("https://www.kugou.com/yy/special/single/{}.html".format(str(uid)))
     #test_search()
 
 # def test_single():
