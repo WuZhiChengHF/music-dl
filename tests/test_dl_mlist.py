@@ -52,7 +52,7 @@ class dlist(object):
 
         spare_list = list()
         for rest in rest_list:
-            if rest.name.find(author) > 0 and rest.name.find(sname) > 0:
+            if rest.name.find(author) >= 0 and rest.name.find(sname) >=0:
                 spare_list.append(rest)
 
         if len(spare_list) == 1: return spare_list[0]
@@ -66,6 +66,7 @@ class dlist(object):
             sobj = self.search_song(s[0], s[1])
             if not sobj: continue
             print(sobj.name)
+            sobj.download()
 
 
 def test_search():
