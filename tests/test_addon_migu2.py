@@ -7,9 +7,14 @@
 """
 import sys
 sys.path.append("..")
+from music_dl import config
+config.init()
 from music_dl.addons import migu2
 
 
 def test_migu2():
     songs_list = migu2.search("包容")
     assert songs_list is not None
+
+if __name__ == '__main__':
+    test_migu2()

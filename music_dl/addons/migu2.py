@@ -13,16 +13,16 @@ from ..api import MusicApi
 from ..song import BasicSong
 
 
-class MiguApi(MusicApi):
+class Migu2Api(MusicApi):
     session = copy.deepcopy(MusicApi.session)
     session.headers.update(
         {"referer": "http://music.migu.cn/", "User-Agent": config.get("ios_useragent")}
     )
 
 
-class MiguSong(BasicSong):
+class Migu2Song(BasicSong):
     def __init__(self):
-        super(MiguSong, self).__init__()
+        super(Migu2Song, self).__init__()
         self.content_id = ""
 
 def get_url_by_id(sid):
@@ -34,7 +34,7 @@ def get_url_by_id(sid):
     for ty in ["320"]:
         params["type"] = ty
         res_data = (
-            MiguApi.request(
+            Migu2Api.request(
                 url,
                 method="GET",
                 data=params,
@@ -45,7 +45,7 @@ def get_url_by_id(sid):
         if res_data: return res_data
     return ""
 
-def migu_search(keyword) -> list:
+def migu2_search(keyword) -> list:
     """ 搜索音乐 """
     params = {
         "keyword": keyword,
@@ -53,12 +53,12 @@ def migu_search(keyword) -> list:
     }
 
     songs_list = []
-    MiguApi.session.headers.update(
+    Migu2Api.session.headers.update(
             {"referer": "http://api.migu.jsososo.com", "User-Agent": config.get("ios_useragent")}
     )
 
     res_data = (
-        MiguApi.request(
+        Migu2Api.request(
             "http://api.migu.jsososo.com/search",
             method="GET",
             data=params,
@@ -70,12 +70,12 @@ def migu_search(keyword) -> list:
     for item in res_data:
         # 获得歌手名字
         singers = [s.get("name", "") for s in item.get("artists", [])]
-        song = MiguSong()
+        song = Migu2Song()
         song.source = "MIGU2"
         song.id = item.get("id", "")
         song.title = item.get("name", "")
         song.singer = "、".join(singers)
-        song.album = item.get("albums", [])[0].get("name", "")
+        song.album = item.get("album", {}).get("name", "")
         song.cover_url = item.get("imgItems", [{}])[0].get("img", "")
         song.lyrics_url = item.get("lyricUrl", item.get("trcUrl", ""))
         # song.duration = item.get("interval", 0)
@@ -89,4 +89,4 @@ def migu_search(keyword) -> list:
 
     return songs_list
 
-search = migu_search
+search = migu2_search
