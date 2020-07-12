@@ -5,8 +5,8 @@
 @file: test_addon_migu2.py
 @time: 2019-06-10
 """
-
-
+import sys
+sys.path.append("..")
 from music_dl.addons import migu2
 
 
