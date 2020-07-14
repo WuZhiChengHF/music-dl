@@ -8,12 +8,13 @@
 
 import re, os, sys
 import requests as req
-import sys
+
 sys.path.append("..")
 from music_dl.source import MusicSource
 from music_dl import config
-reload(sys)
-sys.setdefaultencoding('utf-8')
+
+import importlib
+importlib.reload(sys)
 
 
 class dlist(object):
@@ -27,7 +28,7 @@ class dlist(object):
         resp = req.get(url)
         if resp and resp.status_code != 200:
             raise Exception("get music list failed")
-        slist = re.findall(r"\"[^\"\<\>]* \- [^\"\<\>]*\"", resp.text)
+        slist = re.findall(r"\"[^\"\<\>\\u]* \- [^\"\<\>#]*\"", resp.text)
 
         rlist = list()
         for s in slist:
