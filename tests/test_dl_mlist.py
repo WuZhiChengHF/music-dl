@@ -8,6 +8,8 @@
 
 import re, os, sys
 import requests as req
+import sys
+sys.path.append("..")
 from music_dl.source import MusicSource
 from music_dl import config
 
@@ -78,8 +80,8 @@ def test_search():
 
 
 if '__main__' == __name__:
-    #dl = dlist(["migu"])
-    dl = dlist()
+    dl = dlist(["migu2"])
+    #dl = dlist()
     #rlist = dl.get_mlist("https://www.kugou.com/yy/special/single/2440703.html")
     #print(rlist)
     uid = "2688007"
