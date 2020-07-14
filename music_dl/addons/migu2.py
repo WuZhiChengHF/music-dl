@@ -31,7 +31,7 @@ def get_url_by_id(sid):
         "id": sid,
     }
     url = "http://api.migu.jsososo.com/song"
-    for ty in ["320"]:
+    for ty in ["flac", "320"]:
         params["type"] = ty
         res_data = (
             Migu2Api.request(
@@ -82,7 +82,7 @@ def migu2_search(keyword) -> list:
         # 特有字段
         song.content_id = item.get("contentId", "")
         song.song_url = get_url_by_id(song.id)
-        song.size = "--"
+        song.size = 0
         ext = "mp3" if song.song_url and song.song_url.find("mp3") >=0 else "flac"
         song.ext = ext
         songs_list.append(song)
