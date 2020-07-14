@@ -95,8 +95,13 @@ class MusicSource:
 
     def search_thread(self, source, keyword, ret_songs_list, ret_errors):
         try:
+            author = ""
+            if keyword:
+                msg = keyword.split("_")
+                keyword = msg[0]
+                if len(msg)>1: author = msg[1]
             addon = importlib.import_module(".addons." + source, __package__)
-            ret_songs_list += addon.search(keyword)
+            ret_songs_list += (addon.search(keyword, author) if source == "migu2" else addon.search(keyword))
         except (RequestError, ResponseError, DataError) as e:
             ret_errors.append((source, e))
         except Exception as e:

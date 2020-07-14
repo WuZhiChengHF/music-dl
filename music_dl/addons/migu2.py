@@ -47,7 +47,7 @@ def get_url_by_id(sid):
         except: continue
     return ""
 
-def migu2_search(keyword) -> list:
+def migu2_search(keyword, author=None) -> list:
     """ 搜索音乐 """
     params = {
         "keyword": keyword,
@@ -90,6 +90,7 @@ def migu2_search(keyword) -> list:
         ext = "mp3" if song.song_url and song.song_url.find("mp3") >=0 else "flac"
         song.ext = ext
         songs_list.append(song)
+        if author and song.singer and song.singer.find(author) >= 0: break
 
     return songs_list
 
