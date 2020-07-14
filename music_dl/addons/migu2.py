@@ -32,17 +32,19 @@ def get_url_by_id(sid):
     }
     url = "http://api.migu.jsososo.com/song"
     for ty in ["flac", "320"]:
-        params["type"] = ty
-        res_data = (
-            Migu2Api.request(
-                url,
-                method="GET",
-                data=params,
+        try:
+            params["type"] = ty
+            res_data = (
+                Migu2Api.request(
+                    url,
+                    method="GET",
+                    data=params,
+                )
+                .get("data", {})
+                .get("url", "")
             )
-            .get("data", {})
-            .get("url", "")
-        )
-        if res_data: return res_data
+            if res_data: return res_data
+        except: continue
     return ""
 
 def migu2_search(keyword) -> list:
@@ -74,6 +76,7 @@ def migu2_search(keyword) -> list:
         song.source = "MIGU2"
         song.id = item.get("id", "")
         song.title = item.get("name", "")
+        if song.title and song.title.find(keyword) < 0: continue
         song.singer = "、".join(singers)
         song.album = item.get("album", {}).get("name", "")
         song.cover_url = item.get("imgItems", [{}])[0].get("img", "")
@@ -82,7 +85,8 @@ def migu2_search(keyword) -> list:
         # 特有字段
         song.content_id = item.get("contentId", "")
         song.song_url = get_url_by_id(song.id)
-        song.size = 0
+        if not song.song_url: continue
+        if int(song.size) <=0: song.size = 0
         ext = "mp3" if song.song_url and song.song_url.find("mp3") >=0 else "flac"
         song.ext = ext
         songs_list.append(song)

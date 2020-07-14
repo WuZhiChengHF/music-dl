@@ -14,6 +14,7 @@ from music_dl.addons import migu2
 
 def test_migu2():
     songs_list = migu2.search("包容")
+    print(songs_list)
     assert songs_list is not None
 
 if __name__ == '__main__':
