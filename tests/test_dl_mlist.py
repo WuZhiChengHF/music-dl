@@ -12,6 +12,8 @@ import sys
 sys.path.append("..")
 from music_dl.source import MusicSource
 from music_dl import config
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class dlist(object):
