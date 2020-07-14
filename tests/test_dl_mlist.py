@@ -13,7 +13,7 @@ from music_dl import config
 
 
 class dlist(object):
-    def __init__(self, src_list=["migu", "kugou"]):
+    def __init__(self, src_list=["migu2", "kugou"]):
         config.init()
         self.ms = MusicSource()
         self._src_list = src_list
@@ -48,6 +48,7 @@ class dlist(object):
             print("{}-{} search faild".format(author, sname))
             return None
 
+        #list(filter(lambda x: if i.name.find("DJ") >= 0, rest_list))
         rest_list = [i for i in rest_list if i.name.find("DJ") < 0]
 
         spare_list = list()
