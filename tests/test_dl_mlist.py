@@ -54,7 +54,7 @@ class dlist(object):
             return None
 
         #list(filter(lambda x: if i.name.find("DJ") >= 0, rest_list))
-        rest_list = [i for i in rest_list if i.name.find("DJ") < 0]
+        rest_list = [i for i in rest_list if i.name.lower().find("dj") < 0]
 
         spare_list = list()
         for rest in rest_list:
@@ -87,7 +87,8 @@ if '__main__' == __name__:
     #dl = dlist()
     #rlist = dl.get_mlist("https://www.kugou.com/yy/special/single/2440703.html")
     #print(rlist)
-    uid = "2688007"
+    #uid = "2688007"
+    uid = "2440703"
     dl.down_mlist("https://www.kugou.com/yy/special/single/{}.html".format(str(uid)))
     #test_search()
 
