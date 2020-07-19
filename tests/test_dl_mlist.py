@@ -8,10 +8,12 @@
 
 import re, os, sys
 import requests as req
+import json
 
 sys.path.append("..")
 from music_dl.source import MusicSource
 from music_dl import config
+from functools import wraps
 
 import importlib
 importlib.reload(sys)
@@ -22,13 +24,19 @@ class dlist(object):
         config.init()
         self.ms = MusicSource()
         self._src_list = src_list
+        self.ex_bracket = lambda x: re.sub(r"[\(（].*[\)）]", "", x)
+        self.musics = list()
 
-    def get_mlist(self, url):
-        #https://www.kugou.com/yy/special/single/2440703.html
-        resp = req.get(url)
+    def mlist(self, url):
+        resp = req.get(url, headers={'User-agent': 'Mozilla/5.0'})
         if resp and resp.status_code != 200:
             raise Exception("get music list failed")
-        slist = re.findall(r"\"[^\"\<\>\\u]* \- [^\"\<\>#]*\"", resp.text)
+        return resp.text
+
+    def get_kg_list(self, url):
+        """get list"""
+        text = self.mlist(url)
+        slist = re.findall(r"\"[^\"\<\>\\u]* \- [^\"\<\>#]*\"", text)
 
         rlist = list()
         for s in slist:
@@ -37,7 +45,34 @@ class dlist(object):
             song = tmp[1].replace("\"", "").replace(" ", "")
             rlist.append((author, song))
 
+        self.musics.extend(slist)
+
         return rlist
+
+    def get_mg_list(self, url, page=None):
+        """get list"""
+        text = self.mlist(url + (("?" + page) if page else ""))
+
+        pages = list()
+        if not page: pages = list(set(re.findall(r'page=\d', text) or []))
+
+        slist = re.findall(r"data\-share=\'\{[^\{\}]*\}\'", text)
+
+        slist = [json.loads(i.replace("\n", "")
+                     .replace("data-share=", "")
+                     .replace("\'", "")) for i in slist if i]
+
+        slist = [(self.ex_bracket(i.get('title')), self.ex_bracket(i.get('singer')))
+                    for i in (slist or [])
+                    if i and i.get('title') and i.get('singer')]
+
+        slist = [i for i in slist if not re.match(r"^[a-zA-Z].*", i[1])]
+
+        self.musics.extend(slist)
+
+        for p in pages: self.get_mg_list(url, p)
+
+        return slist
 
     def __get_max_size_item(self, rlist):
         max_size = 0
@@ -67,12 +102,24 @@ class dlist(object):
                 rest_list if not spare_list else spare_list)
 
     def down_mlist(self, url):
-        rlist = self.get_mlist(url)
-        for s in rlist:
+
+        if url and url.find("kugou") >= 0:
+            self.get_kg_list(url)
+        elif url and url.find("migu") >= 0:
+            self.get_mg_list(url)
+            #print(self.musics)
+        else: raise Exception("error: can not get %s" % url)
+
+        for s in self.musics:
             sobj = self.search_song(s[0], s[1])
             if not sobj: continue
             print(sobj.name)
             sobj.download()
+
+    def start_download(self, url, idlist):
+        for i, sid in enumerate(idlist):
+            if i == len(idlist)-1:
+                dl.down_mlist(url % str(sid))
 
 
 def test_search():
@@ -86,9 +133,9 @@ if '__main__' == __name__:
     dl = dlist(["migu2"])
 
     kgs = "https://www.kugou.com/yy/special/single/%s.html"
-    uid = ["2688007", "2440703", "1071267"]
+    kuid = ["2688007", "2440703", "1071267"]
 
-    for i, sid in enumerate(uid):
-        if i == len(uid)-1:
-            dl.down_mlist(kgs % str(sid))
-    #test_search()
+    mgs = "https://music.migu.cn/v3/music/playlist/%s"
+    muid = ["177711366"]
+
+    dl.start_download(mgs, muid)
