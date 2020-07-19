@@ -84,21 +84,11 @@ def test_search():
 
 if '__main__' == __name__:
     dl = dlist(["migu2"])
-    #dl = dlist()
-    #rlist = dl.get_mlist("https://www.kugou.com/yy/special/single/2440703.html")
-    #print(rlist)
-    #uid = "2688007"
-    uid = "2440703"
-    dl.down_mlist("https://www.kugou.com/yy/special/single/{}.html".format(str(uid)))
-    #test_search()
 
-# def test_single():
-#     ms = MusicSource()
-#     song = ms.single("https://music.163.com/#/song?id=26427663")
-#     assert song is not None
-#
-#
-# def test_playlist():
-#     ms = MusicSource()
-#     songs_list = ms.playlist("https://music.163.com/#/playlist?id=2602222983")
-#     assert songs_list is not None
+    kgs = "https://www.kugou.com/yy/special/single/%s.html"
+    uid = ["2688007", "2440703", "1071267"]
+
+    for i, sid in enumerate(uid):
+        if i == len(uid)-1:
+            dl.down_mlist(kgs % str(sid))
+    #test_search()
