@@ -62,11 +62,11 @@ class dlist(object):
                      .replace("data-share=", "")
                      .replace("\'", "")) for i in slist if i]
 
-        slist = [(self.ex_bracket(i.get('title')), self.ex_bracket(i.get('singer')))
+        slist = [(self.ex_bracket(i.get('singer')), self.ex_bracket(i.get('title')))
                     for i in (slist or [])
                     if i and i.get('title') and i.get('singer')]
 
-        slist = [i for i in slist if not re.match(r"^[a-zA-Z].*", i[1])]
+        slist = [i for i in slist if not re.match(r"^[a-zA-Z].*", i[0])]
 
         self.musics.extend(slist)
 
